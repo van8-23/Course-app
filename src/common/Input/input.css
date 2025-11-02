@@ -1,0 +1,8 @@
+.input { margin-bottom: 16px; }
+.input__label { display:block; margin:0 0 6px; font-size:14px; }
+.input__control {
+  width:100%; height:40px; padding:0 12px;
+  border:1px solid #e5e7eb; border-radius:8px; background:#fff;
+}
+.input--error .input__control { border-color:#d92d20; }
+.input__error { margin:6px 0 0; color:#d92d20; font-size:12px; }

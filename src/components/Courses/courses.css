@@ -1,0 +1,29 @@
+
+
+
+.searchbar{display:flex;gap:10px;align-items:center}
+.searchbar input{width:420px;max-width:60vw}
+.courses__toolbar .searchbar{display:flex;align-items:center;gap:10px;flex:1}
+.courses__toolbar .searchbar input{flex:1;min-width:320px}
+
+
+.courses {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+.courses__toolbar { display:flex; gap:12px; align-items:center; margin-bottom:16px; }
+
+/*.courses__toolbar {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto; 
+  align-items: center;
+  gap: 12px;                                  
+  margin: 8px 0 20px;                         
+}
+*/
+.courses__grid {
+  display: grid;
+  gap: 20px;
+}
+

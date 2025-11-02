@@ -1,0 +1,38 @@
+.btn {
+  padding: 10px 16px;
+  border-radius: 2px;
+  border: 1px solid transparent;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, filter 0.2s ease;
+}
+
+
+.btn--primary {
+  background-color: var(--brand);  
+  color: #fff;
+  border: none;
+}
+
+.btn--primary:hover {
+  background-color: var(--brand-dark); 
+}
+
+.btn--secondary {
+  background: #fff;
+  color: var(--brand);
+  border: 1px solid var(--brand);
+}
+
+.btn--danger {
+  background: #ffe9e9;
+  color: #a01919;
+  border-color: #ffc5c5;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--brand);
+}
+

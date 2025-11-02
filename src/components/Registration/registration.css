@@ -1,0 +1,16 @@
+.auth-page { min-height: calc(100vh - 80px); display:grid; place-items:center; }
+.card { background:#fff; border:1px solid #e5e7eb; border-radius:8px; padding:28px; box-shadow:0 6px 20px rgba(0,0,0,.06); }
+.auth-card { width:520px; max-width:92vw; }
+.auth-title { text-align:center; margin:0 0 20px; font-size:26px; font-weight:800; }
+.auth-actions { margin-top:10px; display:flex; justify-content:center; }
+.auth-hint { margin-top:16px; text-align:center; color:#6b7280; font-size:14px; }
+.auth-link { color:#0d768d; font-weight:600; text-decoration:none; }
+.reg{min-height:60vh;display:grid;place-items:center;padding:24px}
+.reg__card{width:100%;max-width:520px;background:#fff;border:1px solid var(--border);
+  border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+.reg__title{margin:0 0 12px}
+.reg__grid{display:grid;gap:12px;margin-top:12px}
+.reg__actions{display:flex;justify-content:flex-end;margin-top:16px;gap:10px}
+
+.auth-hint a {color: #0b6e80;text-decoration: none;font-weight: 600;}
+.auth-hint a:hover {text-decoration: underline;}

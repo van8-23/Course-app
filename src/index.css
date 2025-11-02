@@ -1,0 +1,31 @@
+:root {
+  --c-bg: #f6f7f8;
+  --c-card: #fff;
+  --c-border: #e5e7eb;
+  --c-primary: #007298;
+  --c-text: #2a2a2a;
+  --c-muted: #6b7280;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--c-bg);
+  color: var(--c-text);
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.h1 {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 40px 0 24px;
+}

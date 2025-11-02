@@ -1,0 +1,90 @@
+/* Auth layout */
+.auth {
+  min-height: calc(100vh - 80px); 
+  display: grid;
+  place-items: start center;
+  padding: 48px 16px;
+}
+
+.auth__card {
+  width: 100%;
+  max-width: 520px;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 6px;
+  box-shadow: 0 2px 14px rgba(0,0,0,0.05);
+  padding: 28px;
+}
+
+.auth__title {
+  font-size: 28px;
+  line-height: 1.2;
+  text-align: center;
+  margin: 8px 0 22px;
+  font-weight: 700;
+}
+
+/* Field block */
+.auth__field {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.auth__label {
+  font-size: 14px;
+  color: #4a4a4a;
+}
+
+.auth__input,
+.auth__input:focus {
+  outline: none;
+}
+
+.auth__input {
+  width: 100%;
+  height: 40px;
+  border: 1px solid #cfd8dc;
+  border-radius: 4px;
+  padding: 0 12px;
+  font-size: 14px;
+  background: #fff;
+}
+
+.auth__input[aria-invalid="true"] {
+  border-color: #e74c3c;
+  background: #fff7f7;
+}
+
+/* Inline error message under input */
+.auth__error {
+  font-size: 12px;
+  color: #e74c3c;
+  margin-top: -6px;
+}
+
+/* Button row (button must be same width as inputs) */
+.auth__actions .btn,
+.auth__actions .btn-primary,
+.auth__actions button {
+  width: 100%;
+  height: 44px;
+}
+
+.auth__actions {
+  margin-top: 8px;
+}
+
+
+.auth__hint {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 14px;
+  color: #5f6b72;
+}
+
+.auth__hint a {
+  text-decoration: none;
+  color: #0e6b7e; 
+  font-weight: 600;
+}

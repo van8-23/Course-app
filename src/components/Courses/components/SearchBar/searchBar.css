@@ -1,0 +1,3 @@
+.searchbar{ display:flex; gap:12px; align-items:center; margin:16px 0 24px }
+.searchbar__input{ flex:1; margin:0 }
+.searchbar .input__label{ display:none; }
