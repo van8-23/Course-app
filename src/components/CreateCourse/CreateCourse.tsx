@@ -223,3 +223,230 @@ const CreateCourse: React.FC<Props> = ({ authors, onCreate }) => {
 };
 
 export default CreateCourse;
+{/*
+import { useMemo, useState } from 'react';
+import { v4 as uuid } from 'uuid';
+
+
+type Author = Readonly<{
+  id: string;
+  name: string;
+}>;
+
+
+export type CreateCourseProps = Readonly<{
+  initialTitle?: string;
+  initialDescription?: string;
+  initialDuration?: number; 
+  initialAuthors?: ReadonlyArray<Author>;
+  onSubmit?: (course: {
+    title: string;
+    description: string;
+    duration: number;
+    authors: ReadonlyArray<Author>;
+  }) => void;
+  onCancel?: () => void;
+}>;
+
+const formatDuration = (minutes: number): string => {
+  const m = Math.max(0, Math.floor(Number.isFinite(minutes) ? minutes : 0));
+  const hours = Math.floor(m / 60);
+  const mins = m % 60;
+  if (hours <= 0) return `${mins}min`;
+  return `${hours}h ${mins}min`;
+};
+
+const isNonEmpty = (s: string) => s.trim().length > 0;
+
+const CreateCourse: React.FC<CreateCourseProps> = ({
+  initialTitle = '',
+  initialDescription = '',
+  initialDuration = 0,
+  initialAuthors = [],
+  onSubmit,
+  onCancel,
+}) => {
+  
+  const [title, setTitle] = useState<string>(initialTitle);
+  const [description, setDescription] = useState<string>(initialDescription);
+  const [duration, setDuration] = useState<number>(initialDuration);
+
+  const [availableAuthors, setAvailableAuthors] = useState<Author[]>(
+    
+    [...initialAuthors]
+  );
+  const [courseAuthors, setCourseAuthors] = useState<Author[]>([]);
+
+  const [newAuthorName, setNewAuthorName] = useState<string>('');
+
+  const durationLabel = useMemo(() => formatDuration(duration), [duration]);
+
+  const handleCreateAuthor = () => {
+    const name = newAuthorName.trim();
+    if (!isNonEmpty(name)) return;
+    
+    const exists = availableAuthors.some(
+      (a) => a.name.toLowerCase() === name.toLowerCase()
+    ) || courseAuthors.some((a) => a.name.toLowerCase() === name.toLowerCase());
+
+    if (!exists) {
+      const created: Author = { id: uuid(), name };
+      setAvailableAuthors((prev) => [...prev, created]);
+    }
+    setNewAuthorName('');
+  };
+
+  const handleAddAuthor = (author: Author) => {
+    setAvailableAuthors((prev) => prev.filter((a) => a.id !== author.id));
+    setCourseAuthors((prev) => [...prev, author]);
+  };
+
+  const handleRemoveAuthor = (author: Author) => {
+    setCourseAuthors((prev) => prev.filter((a) => a.id !== author.id));
+    setAvailableAuthors((prev) => [...prev, author]);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const payload = {
+      title: title.trim(),
+      description: description.trim(),
+      duration: Math.max(0, Number.isFinite(duration) ? Math.floor(duration) : 0),
+      authors: [...courseAuthors],
+    };
+
+    
+    if (!isNonEmpty(payload.title) || !isNonEmpty(payload.description) || payload.duration <= 0) {
+      
+      return;
+    }
+
+    onSubmit?.(payload);
+  };
+
+  const safeAvailable = availableAuthors ?? [];
+  const safeSelected = courseAuthors ?? [];
+
+  return (
+    <form data-testid="create-course-form" onSubmit={handleSubmit} className="create-course">
+      <h2>Create Course</h2>
+
+      <div className="field">
+        <label htmlFor="title">Title</label>
+        <input
+          id="title"
+          data-testid="title-input"
+          type="text"
+          placeholder="Enter title..."
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+      </div>
+
+      <div className="field">
+        <label htmlFor="description">Description</label>
+        <textarea
+          id="description"
+          data-testid="description-textarea"
+          placeholder="Enter description..."
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={5}
+        />
+      </div>
+
+      <div className="field">
+        <label htmlFor="duration">Duration (minutes)</label>
+        <input
+          id="duration"
+          data-testid="duration-input"
+          type="number"
+          min={0}
+          step={1}
+          value={Number.isFinite(duration) ? duration : 0}
+          onChange={(e) => setDuration(Number(e.target.value) || 0)}
+        />
+        <div data-testid="duration-output" aria-live="polite">
+          Duration: <strong>{durationLabel}</strong>
+        </div>
+      </div>
+
+      <div className="field">
+        <label htmlFor="new-author">Add new author</label>
+        <div className="row">
+          <input
+            id="new-author"
+            data-testid="author-name-input"
+            type="text"
+            placeholder="Author name"
+            value={newAuthorName}
+            onChange={(e) => setNewAuthorName(e.target.value)}
+          />
+          <button
+            type="button"
+            data-testid="add-author-btn"
+            onClick={handleCreateAuthor}
+            disabled={!isNonEmpty(newAuthorName)}
+          >
+            Create author
+          </button>
+        </div>
+      </div>
+
+      <div className="authors">
+        <div className="authors__column">
+          <h3>Available authors</h3>
+          <ul data-testid="available-authors">
+            {safeAvailable.length === 0 && <li>No authors yet</li>}
+            {safeAvailable.map((a) => (
+              <li key={a.id}>
+                <span>{a.name}</span>
+                <button
+                  type="button"
+                  data-testid={`add-author-${a.id}`}
+                  onClick={() => handleAddAuthor(a)}
+                >
+                  Add author
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="authors__column">
+          <h3>Course authors</h3>
+          <ul data-testid="course-authors">
+            {safeSelected.length === 0 && <li>Author list is empty</li>}
+            {safeSelected.map((a) => (
+              <li key={a.id}>
+                <span>{a.name}</span>
+                <button
+                  type="button"
+                  data-testid={`remove-author-${a.id}`}
+                  onClick={() => handleRemoveAuthor(a)}
+                >
+                  Delete author
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <div className="actions">
+        <button type="submit" data-testid="create-course-btn">
+          Create course
+        </button>
+        <button
+          type="button"
+          data-testid="cancel-create-course-btn"
+          onClick={() => onCancel?.()}
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  );
+};
+
+export default CreateCourse;*/}

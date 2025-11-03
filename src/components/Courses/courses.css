@@ -1,6 +1,6 @@
 
 
-
+/*
 .searchbar{display:flex;gap:10px;align-items:center}
 .searchbar input{width:420px;max-width:60vw}
 .courses__toolbar .searchbar{display:flex;align-items:center;gap:10px;flex:1}
@@ -12,18 +12,62 @@
   margin: 0 auto;
   padding: 32px 24px 80px;
 }
-.courses__toolbar { display:flex; gap:12px; align-items:center; margin-bottom:16px; }
-
-/*.courses__toolbar {
+/*.courses__toolbar { display:flex; gap:12px; align-items:center; margin-bottom:16px; }*/
+/*
+.courses__toolbar {
   display: grid;
   grid-template-columns: 1fr auto auto auto; 
   align-items: center;
   gap: 12px;                                  
   margin: 8px 0 20px;                         
 }
-*/
+
 .courses__grid {
   display: grid;
   gap: 20px;
+}*/
+
+
+.courses__toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:nowrap;            
+  margin-bottom:24px;
 }
 
+
+.courses__search{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex:1 1 auto;
+  min-width:0;
+}
+
+
+.searchbar input{
+  width:420px;
+  max-width:60vw}
+
+
+
+.courses__add{
+  margin-left:auto;            
+  white-space:nowrap;
+}
+
+
+button, .btn, .button{
+  border-radius:2px;           
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+
+@media (max-width: 768px){
+  .courses__toolbar{ flex-wrap:wrap; }
+  .courses__add{ width:100%; }
+}
