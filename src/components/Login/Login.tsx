@@ -88,7 +88,7 @@ export default function Login() {
 
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useInRouterContext } from 'react-router-dom';
 import Button from '../../common/Button/Button';
 import { BUTTON_TEXT } from '../../constants/uiText';
 import '../../styles/auth.css';
@@ -99,6 +99,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<Errors>({});
+  const isInRouter = useInRouterContext();
 
   const validate = (): Errors => {
     return {
@@ -166,7 +167,12 @@ export default function Login() {
         </form>
 
         <p className="auth__hint">
-          If you don’t have an account you may <Link to="/registration">registration</Link>
+            If you don’t have an account you may{' '}
+          {isInRouter ? (
+            <Link to="/registration">registration</Link>
+          ) : (
+            <a href="/registration">registration</a>
+          )}
         </p>
       </section>
     </main>
