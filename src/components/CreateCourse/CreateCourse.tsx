@@ -1,8 +1,7 @@
 
-
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Button from '../../common/Button/Button';
-import AuthorItem from '../../AuthorItem/AuthorItem';
+import AuthorItem from './components/AuthorItem/AuthorItem';
 import type { Author, Course } from '../../constants';
 import './createCourse.css';
 
@@ -27,59 +26,71 @@ const toHHMM = (min: number) => {
 };
 
 type Props = {
-    authors?: Author[];
+  authors?: Author[];
   onCreate: (course: Course) => void;
+  onCancel?: () => void;
 };
 
-//const CreateCourse: React.FC<Props> = ({ authors, onCreate }) => {
-const CreateCourse: React.FC<Props> = ({ authors = [], onCreate }) => {
-
+const CreateCourse: React.FC<Props> = ({ authors, onCreate, onCancel }) => {
+  const baseAuthors = useMemo<Author[]>(() => authors ?? [], [authors]);
   const initialAuthors = Array.isArray(authors) ? authors : [];
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [duration, setDuration] = useState<string>(''); 
+
+  const [duration, setDuration] = useState<string>('');
   const [newAuthor, setNewAuthor] = useState('');
 
-  //const [available, setAvailable] = useState<Author[]>(authors);
-  const [available, setAvailable] = useState<Author[]>(() => [...initialAuthors]);
+  const [available, setAvailable] = useState<Author[]>(baseAuthors);
   const [courseAuthors, setCourseAuthors] = useState<Author[]>([]);
 
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+   useEffect(() => {
+    setAvailable(baseAuthors);
+  }, [baseAuthors]);
 
   const durationNum = useMemo(() => Number(duration || 0), [duration]);
   const durationLabel = useMemo(() => toHHMM(durationNum), [durationNum]);
 
   const errors = {
-    title: title.trim().length < 2 ? 'Title is required.' : '',
-    description: description.trim().length < 2 ? 'Description is required.' : '',
+     title:
+      title.trim().length < 2 ? 'Title is required and should be at least 2 characters' : '',
+    description:
+      description.trim().length < 2
+        ? 'Description is required and should be at least 2 characters'
+        : '',
     duration:
       duration.trim().length === 0
         ? 'Duration is required.'
         : durationNum <= 0
         ? 'Duration should be more than 0.'
         : '',
-    newAuthor: newAuthor.trim().length > 0 && newAuthor.trim().length < 2 ? 'Name must be at least 2 characters.' : '',
-  };
 
+    newAuthor:
+      newAuthor.trim().length > 0 && newAuthor.trim().length < 2
+        ? 'Author name should be at least 2 characters'
+        : '',
+  } as const;
   const showError = (name: keyof typeof errors) => touched[name] && errors[name];
 
   const handleCreateAuthor = () => {
-    setTouched((t) => ({ ...t, newAuthor: true }));
+    setTouched((prev) => ({ ...prev, newAuthor: true }));
     const name = newAuthor.trim();
     if (name.length < 2) return;
-    const a: Author = { id: uid(), name };
-    setAvailable((list) => [...list, a]);
+    const author: Author = { id: uid(), name };
+    setAvailable((list) => [...list, author]);
     setNewAuthor('');
+    setTouched((prev) => ({ ...prev, newAuthor: false }));
   };
 
-  const addAuthorToCourse = (a: Author) => {
-    setAvailable((list) => list.filter((x) => x.id !== a.id));
-    setCourseAuthors((list) => [...list, a]);
+    const addAuthorToCourse = (author: Author) => {
+    setAvailable((list) => list.filter((item) => item.id !== author.id));
+    setCourseAuthors((list) => [...list, author]);
   };
 
-  const removeCourseAuthor = (a: Author) => {
-    setCourseAuthors((list) => list.filter((x) => x.id !== a.id));
-    setAvailable((list) => [...list, a]);
+    const removeCourseAuthor = (author: Author) => {
+    setCourseAuthors((list) => list.filter((item) => item.id !== author.id));
+    setAvailable((list) => [...list, author]);
   };
 
   const onSubmit = () => {
@@ -92,10 +103,15 @@ const CreateCourse: React.FC<Props> = ({ authors = [], onCreate }) => {
       description: description.trim(),
       creationDate: today(),
       duration: durationNum,
-      authors: courseAuthors.map((a) => a.id),
+      authors: courseAuthors.map((author) => author.id),
     };
+
     onCreate(course);
-    setTitle(''); setDescription(''); setDuration(''); setCourseAuthors([]);
+    setTitle('');
+    setDescription('');
+    setDuration('');
+    setCourseAuthors([]);
+    setTouched({});
   };
 
   return (
@@ -103,7 +119,6 @@ const CreateCourse: React.FC<Props> = ({ authors = [], onCreate }) => {
       <h1 className="h1">Course Edit/Create Page</h1>
 
       <div className="cc-card">
-    
         <div className="cc-section">
           <h2 className="cc-subtitle">Main Info</h2>
 
@@ -114,8 +129,8 @@ const CreateCourse: React.FC<Props> = ({ authors = [], onCreate }) => {
               type="text"
               placeholder="Input text"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              onBlur={() => setTouched((t) => ({ ...t, title: true }))}
+              onChange={(event) => setTitle(event.target.value)}
+              onBlur={() => setTouched((prev) => ({ ...prev, title: true }))}
               aria-invalid={!!showError('title')}
             />
             {showError('title') && <div className="cc-error">Title is required.</div>}
@@ -127,12 +142,16 @@ const CreateCourse: React.FC<Props> = ({ authors = [], onCreate }) => {
               className={`cc-textarea ${showError('description') ? 'is-invalid' : ''}`}
               placeholder="Input text"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              onBlur={() => setTouched((t) => ({ ...t, description: true }))}
+              onChange={(event) => setDescription(event.target.value)}
+              onBlur={() => setTouched((prev) => ({ ...prev, description: true }))}
               aria-invalid={!!showError('description')}
               rows={6}
             />
-            {showError('description') && <div className="cc-error">Description is required.</div>}
+            {showError('description') && (
+              <div className="cc-error">
+                Description is required and should be at least 2 characters
+              </div>
+            )}
           </label>
         </div>
 
@@ -147,11 +166,11 @@ const CreateCourse: React.FC<Props> = ({ authors = [], onCreate }) => {
                 pattern="[0-9]*"
                 placeholder="Input text"
                 value={duration}
-                onChange={(e) => {
-                  const onlyDigits = e.target.value.replace(/\D/g, '');
-                  setDuration(onlyDigits);
+                  onChange={(event) => {
+                  const digitsOnly = event.target.value.replace(/\D/g, '');
+                  setDuration(digitsOnly);
                 }}
-                onBlur={() => setTouched((t) => ({ ...t, duration: true }))}
+                onBlur={() => setTouched((prev) => ({ ...prev, duration: true }))}
                 aria-invalid={!!showError('duration')}
               />
               {showError('duration') && <div className="cc-error">{errors.duration}</div>}
@@ -175,22 +194,30 @@ const CreateCourse: React.FC<Props> = ({ authors = [], onCreate }) => {
                   type="text"
                   placeholder="Input text"
                   value={newAuthor}
-                  onChange={(e) => setNewAuthor(e.target.value)}
-                  onBlur={() => setTouched((t) => ({ ...t, newAuthor: true }))}
+                  onChange={(event) => {
+                    setNewAuthor(event.target.value);
+                    setTouched((prev) => ({ ...prev, newAuthor: false }));
+                  }}
+                  onBlur={() => setTouched((prev) => ({ ...prev, newAuthor: true }))}
                 />
-                {showError('newAuthor') && <div className="cc-error">Name must be at least 2 characters.</div>}
+                {showError('newAuthor') && (
+                  <div className="cc-error">Author name should be at least 2 characters</div>
+                )}
               </label>
-              <Button buttonText="CREATE AUTHOR" onClick={handleCreateAuthor} />
+              <Button buttonText="CREATE AUTHOR" onClick={handleCreateAuthor} type="button" />
             </div>
 
             <h3 className="cc-mini">Authors List</h3>
             {available.length === 0 ? (
               <p className="cc-muted">No authors available</p>
             ) : (
-              available.map((a) => (
-                /*<AuthorItem key={a.id} name={a.name} variant="add" onAdd={() => addAuthorToCourse(a)}
-                />*/
-                <AuthorItem key={a.id} author={a} mode="add" onAdd={addAuthorToCourse} />
+              available.map((author) => (
+                 <AuthorItem
+                  key={author.id}
+                  name={author.name}
+                  variant="add"
+                  onAdd={() => addAuthorToCourse(author)}
+                />
               ))
             )}
           </div>
@@ -200,10 +227,8 @@ const CreateCourse: React.FC<Props> = ({ authors = [], onCreate }) => {
             {courseAuthors.length === 0 ? (
               <p className="cc-muted">Author list is empty</p>
             ) : (
-              courseAuthors.map((a) => (
-                /*<AuthorItem key={a.id} name={a.name} variant="remove" onRemove={() => removeCourseAuthor(a)}
-                />*/
-                 <AuthorItem key={a.id} author={a} mode="remove" onRemove={removeCourseAuthor} />
+              courseAuthors.map((author) => (
+                 <AuthorItem key={author.id} name={author.name} variant ="remove" onRemove={() => removeCourseAuthor(author)} />
               ))
             )}
           </div>
@@ -211,8 +236,18 @@ const CreateCourse: React.FC<Props> = ({ authors = [], onCreate }) => {
 
 
         <div className="cc-actions">
-          <Button buttonText="CANCEL" onClick={() => globalThis.history.back()} />
-          <Button buttonText="CREATE COURSE" onClick={onSubmit} />
+          <Button
+            buttonText="CANCEL"
+            onClick={() => {
+              if (onCancel) {
+                onCancel();
+              } else {
+                globalThis.history?.back?.();
+              }
+            }}
+            type="button"
+          />
+          <Button buttonText="CREATE COURSE" onClick={onSubmit} type="button" />
         </div>
       </div>
     </section>
