@@ -1,6 +1,5 @@
-
 import React from 'react';
-import Button from '../../../../common/Button/Button';
+import Button from '../../common/Button/Button';
 
 export type AuthorItemProps = {
   name: string;
@@ -12,7 +11,7 @@ export type AuthorItemProps = {
 const AuthorItem: React.FC<AuthorItemProps> = ({ name, variant, onAdd, onRemove }) => {
   const isAdd = variant === 'add';
 
-   const handleClick = () => {
+  const handleClick = () => {
     if (isAdd) {
       onAdd?.();
     } else {
@@ -23,11 +22,7 @@ const AuthorItem: React.FC<AuthorItemProps> = ({ name, variant, onAdd, onRemove 
   return (
     <div className="cc-row">
       <span className="cc-author-name">{name}</span>
-      <Button
-        buttonText={isAdd ? 'Add author' : 'Delete author'}
-        onClick={handleClick}
-        type="button"
-      />
+      <Button buttonText={isAdd ? 'Add author' : 'Delete author'} onClick={handleClick} type="button" />
     </div>
   );
 };

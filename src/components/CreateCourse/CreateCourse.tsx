@@ -1,7 +1,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Button from '../../common/Button/Button';
-import AuthorItem from './components/AuthorItem/AuthorItem';
+import AuthorItem from '../AuthorItem/AuthorItem';
 import type { Author, Course } from '../../constants';
 import './createCourse.css';
 
@@ -102,7 +102,7 @@ const CreateCourse: React.FC<Props> = ({ authors, onCreate, onCancel }) => {
     setAvailable((list) => [...list, author]);
   };
 
-  const resetForm = () => {
+     const resetForm = () => {
     setTitle('');
     setDescription('');
     setDuration('');
@@ -111,6 +111,8 @@ const CreateCourse: React.FC<Props> = ({ authors, onCreate, onCancel }) => {
     setAvailable((prev) => mergeAuthors(baseAuthors, prev, courseAuthors));
     setTouched({});
   };
+
+  
 
   const onSubmit = () => {
     setTouched({ title: true, description: true, duration: true, newAuthor: !!newAuthor.trim() });

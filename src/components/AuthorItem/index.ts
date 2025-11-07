@@ -1,0 +1,1 @@
+export { default, type AuthorItemProps } from './AuthorItem';
