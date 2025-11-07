@@ -5,7 +5,6 @@ import AuthorItem from './components/AuthorItem/AuthorItem';
 import type { Author, Course } from '../../constants';
 import './createCourse.css';
 
-
 const uid = () => crypto.randomUUID?.() ?? `id_${Math.random().toString(36).slice(2)}`;
 const today = () => {
   const d = new Date();
@@ -31,9 +30,18 @@ type Props = {
   onCancel?: () => void;
 };
 
+const mergeAuthors = (...lists: Author[][]) => {
+  const map = new Map<string, Author>();
+  for (const list of lists) {
+    for (const author of list) {
+      map.set(author.id, author);
+    }
+  }
+  return Array.from(map.values());
+};
+
 const CreateCourse: React.FC<Props> = ({ authors, onCreate, onCancel }) => {
   const baseAuthors = useMemo<Author[]>(() => authors ?? [], [authors]);
-  const initialAuthors = Array.isArray(authors) ? authors : [];
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
@@ -45,14 +53,15 @@ const CreateCourse: React.FC<Props> = ({ authors, onCreate, onCancel }) => {
 
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-   useEffect(() => {
-    setAvailable(baseAuthors);
+     useEffect(() => {
+    setAvailable((prev) => mergeAuthors(baseAuthors, prev));
   }, [baseAuthors]);
 
   const durationNum = useMemo(() => Number(duration || 0), [duration]);
   const durationLabel = useMemo(() => toHHMM(durationNum), [durationNum]);
 
   const errors = {
+
      title:
       title.trim().length < 2 ? 'Title is required and should be at least 2 characters' : '',
     description:
@@ -65,7 +74,6 @@ const CreateCourse: React.FC<Props> = ({ authors, onCreate, onCancel }) => {
         : durationNum <= 0
         ? 'Duration should be more than 0.'
         : '',
-
     newAuthor:
       newAuthor.trim().length > 0 && newAuthor.trim().length < 2
         ? 'Author name should be at least 2 characters'
@@ -88,9 +96,20 @@ const CreateCourse: React.FC<Props> = ({ authors, onCreate, onCancel }) => {
     setCourseAuthors((list) => [...list, author]);
   };
 
+
     const removeCourseAuthor = (author: Author) => {
     setCourseAuthors((list) => list.filter((item) => item.id !== author.id));
     setAvailable((list) => [...list, author]);
+  };
+
+  const resetForm = () => {
+    setTitle('');
+    setDescription('');
+    setDuration('');
+    setNewAuthor('');
+    setCourseAuthors([]);
+    setAvailable((prev) => mergeAuthors(baseAuthors, prev, courseAuthors));
+    setTouched({});
   };
 
   const onSubmit = () => {
@@ -107,11 +126,7 @@ const CreateCourse: React.FC<Props> = ({ authors, onCreate, onCancel }) => {
     };
 
     onCreate(course);
-    setTitle('');
-    setDescription('');
-    setDuration('');
-    setCourseAuthors([]);
-    setTouched({});
+    resetForm();
   };
 
   return (
@@ -133,7 +148,7 @@ const CreateCourse: React.FC<Props> = ({ authors, onCreate, onCancel }) => {
               onBlur={() => setTouched((prev) => ({ ...prev, title: true }))}
               aria-invalid={!!showError('title')}
             />
-            {showError('title') && <div className="cc-error">Title is required.</div>}
+            {showError('title') && <div className="cc-error">{errors.title}</div>}
           </label>
 
           <label className="cc-label">
@@ -166,6 +181,7 @@ const CreateCourse: React.FC<Props> = ({ authors, onCreate, onCancel }) => {
                 pattern="[0-9]*"
                 placeholder="Input text"
                 value={duration}
+
                   onChange={(event) => {
                   const digitsOnly = event.target.value.replace(/\D/g, '');
                   setDuration(digitsOnly);
@@ -212,6 +228,7 @@ const CreateCourse: React.FC<Props> = ({ authors, onCreate, onCancel }) => {
               <p className="cc-muted">No authors available</p>
             ) : (
               available.map((author) => (
+
                  <AuthorItem
                   key={author.id}
                   name={author.name}
@@ -228,8 +245,13 @@ const CreateCourse: React.FC<Props> = ({ authors, onCreate, onCancel }) => {
               <p className="cc-muted">Author list is empty</p>
             ) : (
               courseAuthors.map((author) => (
-                 <AuthorItem key={author.id} name={author.name} variant ="remove" onRemove={() => removeCourseAuthor(author)} />
-              ))
+                   <AuthorItem
+                  key={author.id}
+                  name={author.name}
+                  variant="remove"
+                  onRemove={() => removeCourseAuthor(author)}
+                />
+                ))
             )}
           </div>
         </div>
@@ -239,6 +261,7 @@ const CreateCourse: React.FC<Props> = ({ authors, onCreate, onCancel }) => {
           <Button
             buttonText="CANCEL"
             onClick={() => {
+              resetForm();
               if (onCancel) {
                 onCancel();
               } else {
