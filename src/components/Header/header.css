@@ -1,0 +1,33 @@
+
+
+
+
+.header {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+}
+
+.header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+}
+
+.header__right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header__user {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.logo {
+  width: 72px;    
+  height: 72px;
+  object-fit: contain;
+  border-radius: 50%;
+}

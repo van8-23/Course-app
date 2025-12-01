@@ -1,0 +1,24 @@
+
+
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 2px;
+  border: none;                 
+  background: var(--brand);     
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.icon-btn:hover {
+  background: var(--brand-dark);
+}
+
+
+.icon-btn__img {
+  width: 18px;
+  height: 18px;
+  display: block;
+  filter: brightness(0) invert(1);  
+}
